@@ -2,9 +2,6 @@ from enum import Enum
 
 
 class Wellness(str, Enum):
-    EXCELLENT = "excellent"
-    GOOD = "good"
-    FAIR = "fair"
-    POOR = "poor"
+    JUST_FINE = "just_fine"
     UNHEALTHY = "unhealthy"
-    UNKNOWN = "unknown"
+

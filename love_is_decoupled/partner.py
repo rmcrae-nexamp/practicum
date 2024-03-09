@@ -1,9 +1,20 @@
+"""
+YOU SHALL NOT CHANGE THE INTERNALS OF THIS MODULE!!!!!!!
+"""
+
+from typing import Optional, List
+
 import time
 
+BITCOIN = "bitcoin"
+DOPE_SHIT = "dope_shit"
+MYSELF = "myself"
+TOMMY = "Tom Brady"
+HERO = "hero"
 
-# YOU SHALL NOT CHANGE THE INTERNALS OF THIS CLASS
+
 class Partner:
-    def __init__(self, priorities: list[str]):
+    def __init__(self, priorities: Optional[List[str]] = None):
         self.priorities = priorities
 
     def __str__(self):
@@ -13,16 +24,16 @@ class Partner:
         self.__look_at_phone()
         self.__play_halo()
         return "Hey, what's up?"
-    
+
     def list_priorities(self):
         if not self.priorities:
             self._set_priorities()
         return self.priorities
-    
+
     def _set_priorities(self):
         self.__look_at_phone()
         self.__play_halo()
-        self.priorities = ["dope shit", "bitcoin", "myself", "Tom Brady"]
+        self.priorities = [DOPE_SHIT, BITCOIN, MYSELF, TOMMY, MYSELF, HERO]
         return None
 
     def __look_at_phone(self) -> None:
