@@ -20,7 +20,7 @@ class Hero:
 
     def get_wellness(self) -> Literal[Wellness.JUST_FINE, Wellness.UNHEALTHY]:
         """See how well the Hero is doing. The Hero will first check in
-        with their partner to see if they are communicating. If they are
+        with their partner to see if they are communicating. If they aren't
         talking, the Hero will return that they are not doing well. If they
         are communicating, the Hero will return that they are doing just
         fine.
@@ -56,9 +56,7 @@ class Hero:
             bool: If the Hero should find a new partner
         """
         partner_priorities = self.partner.list_priorities()
-        if HERO not in partner_priorities:
-            return True
-        return False
+        return HERO not in partner_priorities
 
     def _check_partner(self):
         return self.partner.communicate()
