@@ -28,6 +28,7 @@ class Partner(Protocol):
 class Hero:
 
     _partner: Optional[Partner] = None
+    _wellness: Literal[Wellness.JUST_FINE, Wellness.UNHEALTHY] = Wellness.JUST_FINE
 
     def __init__(self, name: str, interests: List[str]):
         self.name = name
@@ -43,8 +44,8 @@ class Hero:
     def partner(self, partner: Partner) -> None:
         self._partner = partner
 
-    def get_wellness(self) -> Literal[Wellness.JUST_FINE, Wellness.UNHEALTHY]:
-        """See how well the Hero is doing. The Hero will first check in
+    def get_relationship_wellness(self) -> Literal[Wellness.JUST_FINE, Wellness.UNHEALTHY]:
+        """See how well the Hero is doing in their relationship. The Hero will first check in
         with their partner to see if they are communicating. If they aren't
         talking, the Hero will return that they are not doing well. If they
         are communicating, the Hero will return that they are doing just
@@ -57,6 +58,14 @@ class Hero:
         if communincation is None:
             return Wellness.UNHEALTHY
         return Wellness.JUST_FINE
+
+    def wellness(self) -> Wellness:
+        # Separating the wellness of the Hero from the relationship status.
+        return self._wellness
+
+    @wellness.setter
+    def wellness(self, wellness: Wellness) -> None:
+        self._wellness = wellness
 
     def get_life_plan(self) -> Dict[str, int]:
         """Construct a life plan for the Hero. The Hero will first check
