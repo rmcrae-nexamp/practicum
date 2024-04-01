@@ -34,10 +34,14 @@ class Hero:
         self.interests = interests
 
     @property
-    def partner(self):
-        if not self._partner:
-            self._partner = Partner()
+    def partner(self) -> Optional[Partner]:
+        # Rather than the Hero creating a Partner instance, the Partner instance
+        # is passed in as a dependency.
         return self._partner
+
+    @partner.setter
+    def partner(self, partner: Partner) -> None:
+        self._partner = partner
 
     def get_wellness(self) -> Literal[Wellness.JUST_FINE, Wellness.UNHEALTHY]:
         """See how well the Hero is doing. The Hero will first check in
