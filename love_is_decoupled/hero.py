@@ -59,6 +59,7 @@ class Hero:
             return Wellness.UNHEALTHY
         return Wellness.JUST_FINE
 
+    @property
     def wellness(self) -> Wellness:
         # Separating the wellness of the Hero from the relationship status.
         return self._wellness
