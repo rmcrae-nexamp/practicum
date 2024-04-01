@@ -44,6 +44,12 @@ class Hero:
 
     @partner.setter
     def partner(self, partner: Partner) -> None:
+        if not self.wellness == Wellness.JUST_FINE:
+            raise ValueError("The Hero is not well. They cannot have a partner.")
+
+        if not self._check_partner(patience=self.patience):
+            raise ValueError("The potential partner is not communicating. The Hero doesn't want them.")
+
         self._partner = partner
 
     async def get_relationship_wellness(self) -> Literal[Wellness.JUST_FINE, Wellness.UNHEALTHY]:
