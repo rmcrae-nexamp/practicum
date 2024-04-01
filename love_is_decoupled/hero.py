@@ -100,11 +100,16 @@ class Hero:
             return set()
         return set(self.partner.list_priorities())
 
-    def _construct_life_plan(self, partner_priorities: Set[str]) -> Dict[str, int]:
+    def _construct_life_plan(self, partner_priorities: Set[str] = None) -> Dict[str, int]:
+        # The Hero should be able to construct a life plan with or without a partner.
+        if not partner_priorities:
+            partner_priorities = set()
+
         return {
             interest: self._value_interest_for_life_plan(interest, partner_priorities)
             for interest in self.interests
         }
 
-    def _value_interest_for_life_plan(self, interest: str, partner_priorities: Set[str]):
+    @staticmethod
+    def _value_interest_for_life_plan(interest: str, partner_priorities: Set[str]):
         return 2 if interest in partner_priorities else 1
