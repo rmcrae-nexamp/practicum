@@ -1,6 +1,6 @@
-from typing import Dict, Optional, List, Literal, Set
+# Removed the import statement for the Partner class and HERO variable to decouple the two modules.
+from typing import Dict, List, Literal, Optional, Protocol, Set
 
-from .partner import Partner, HERO
 from .wellness import Wellness
 
 
