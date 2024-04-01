@@ -4,6 +4,27 @@ from typing import Dict, List, Literal, Optional, Protocol, Set
 from .wellness import Wellness
 
 
+class Partner(Protocol):
+    """Created an interface for dependency inversion."""
+
+    def communicate(self) -> Optional[bool]:
+        """Check if the partner is communicating with the Hero. If the
+        partner is communicating, return True. If the partner is not
+        communicating, return False.
+
+        Returns:
+            Optional[bool]: If the partner is communicating
+        """
+
+    def list_priorities(self) -> List[str]:
+        """List the partner's priorities. The partner will return a list
+        of their priorities.
+
+        Returns:
+            List[str]: The partner's priorities
+        """
+
+
 class Hero:
 
     _partner: Optional[Partner] = None
