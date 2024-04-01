@@ -6,7 +6,7 @@ from .wellness import Wellness
 
 
 class Partner(Protocol):
-    """Created an interface for dependency inversion."""
+    """Created an interface for the partner."""
 
     def communicate(self) -> Optional[bool]:
         """Check if the partner is communicating with the Hero. If the
