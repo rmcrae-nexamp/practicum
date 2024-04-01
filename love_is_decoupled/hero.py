@@ -84,7 +84,7 @@ class Hero:
             return True
 
         partner_priorities = self.partner.list_priorities()
-        return HERO not in partner_priorities
+        return type(self).__name__.lower() not in partner_priorities
 
     def _check_partner(self):
         return self.partner.communicate()
