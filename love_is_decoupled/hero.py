@@ -80,6 +80,9 @@ class Hero:
         Returns:
             bool: If the Hero should find a new partner
         """
+        if not self.partner:
+            return True
+
         partner_priorities = self.partner.list_priorities()
         return HERO not in partner_priorities
 
