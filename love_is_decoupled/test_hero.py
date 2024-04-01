@@ -1,4 +1,7 @@
+import asyncio
+
 from .hero import Hero
+from .partner import Partner, BITCOIN, DOPE_SHIT, HERO, MYSELF
 from .wellness import Wellness
 
 
@@ -20,25 +23,72 @@ irresponsible.
 """
 
 
-def test_hero_get_wellness():
+def test_hero_get_relationship_wellness():
     """
     Given:
-        - a Hero instance
+        - a Hero instance has a partner
 
     When:
-        - the get_wellness method is called
+        - the get_relationship_wellness method is called
 
     Then:
-        - the method should return Wellness.FAIR
+        - the method should return Wellness.JUST_FINE
     """
     # Given
-    hero = Hero(name="Pat", interests=["doesn't matter"])
+    partner = Partner(priorities=[HERO])
+    hero = Hero(name="Pat", interests=["doesn't matter"], patience=5)
+    hero.partner = partner
 
     # When
-    wellness = hero.get_wellness()
+    wellness = asyncio.run(hero.get_relationship_wellness())
 
     # Then
     assert wellness == Wellness.JUST_FINE
+
+
+def test_hero_get_relationship_wellness_little_patience():
+    """
+    Given:
+        - a Hero instance has a partner
+
+    When:
+        - the get_relationship_wellness method is called
+        - the partner takes too long to communicate
+
+    Then:
+        - the method should return Wellness.UNHEALTHY
+    """
+    # Given
+    partner = Partner(priorities=[HERO])
+    hero = Hero(name="Pat", interests=["doesn't matter"], patience=1)
+    hero.partner = partner
+
+    # When
+    wellness = asyncio.run(hero.get_relationship_wellness())
+
+    # Then
+    assert wellness == Wellness.UNHEALTHY
+
+
+def test_hero_get_relationship_wellness_no_partner():
+    """
+    Given:
+        - a Hero instance has no partner
+
+    When:
+        - the get_relationship_wellness method is called
+
+    Then:
+        - the method should return Wellness.UNHEALTHY
+    """
+    # Given
+    hero = Hero(name="Pat", interests=["doesn't matter"], patience=1)
+
+    # When
+    wellness = asyncio.run(hero.get_relationship_wellness())
+
+    # Then
+    assert wellness == Wellness.UNHEALTHY
 
 
 def test_hero_get_life_plan():
@@ -54,7 +104,54 @@ def test_hero_get_life_plan():
         - the method should return a dictionary with the interests as keys and the value as 1
     """
     # Given
-    hero = Hero(name="Vic", interests=["entrepreneurship", "helping others"])
+    partner = Partner(priorities=[BITCOIN, DOPE_SHIT])
+    hero = Hero(name="Vic", interests=["entrepreneurship", "helping others"], patience=1)
+    hero.partner = partner
+
+    # When
+    life_plan = hero.get_life_plan()
+
+    # Then
+    assert life_plan == {"entrepreneurship": 1, "helping others": 1}
+
+
+def test_hero_get_life_plan_with_overlapping_interests():
+    """
+    Given:
+        - a Hero instance
+        - a Partner that has overlapping interests with the Hero
+
+    When:
+        - the get_life_plan method is called
+
+    Then:
+        - the method should return a dictionary with the interests as keys and the value as 2
+    """
+    # Given
+    partner = Partner(priorities=["helping others", "dope"])
+    hero = Hero(name="Vic", interests=["entrepreneurship", "helping others"], patience=0)
+    hero.partner = partner
+
+    # When
+    life_plan = hero.get_life_plan()
+
+    # Then
+    assert life_plan == {"entrepreneurship": 1, "helping others": 2}
+
+
+def test_hero_get_life_plan_no_partner():
+    """
+    Given:
+        - a Hero instance with no partner
+
+    When:
+        - the get_life_plan method is called
+
+    Then:
+        - the method should return the hero's interests as keys and the value as 1
+    """
+    # Given
+    hero = Hero(name="Vic", interests=["entrepreneurship", "helping others"], patience=0)
 
     # When
     life_plan = hero.get_life_plan()
@@ -76,10 +173,33 @@ def test_hero_should_find_new_partner():
         - the method should return False
     """
     # Given
-    hero = Hero(name="Tracy", interests=["vaping", "Jean-Claude Van Damme"])
+    partner = Partner(priorities=[HERO])
+    hero = Hero(name="Tracy", interests=["vaping", "Jean-Claude Van Damme"], patience=0)
+    hero.partner = partner
 
     # When
     should_find_new_partner = hero.should_find_new_partner()
 
     # Then
     assert should_find_new_partner is False
+
+
+def test_hero_should_find_new_partner_no_partner():
+    """
+    Given:
+        - a Hero instance with no partner
+
+    When:
+        - the should_find_new_partner method is called
+
+    Then:
+        - the method should return True
+    """
+    # Given
+    hero = Hero(name="Tracy", interests=["vaping", "Jean-Claude Van Damme"], patience=0)
+
+    # When
+    should_find_new_partner = hero.should_find_new_partner()
+
+    # Then
+    assert should_find_new_partner is True
