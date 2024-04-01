@@ -1,5 +1,6 @@
 # Removed the import statement for the Partner class and HERO variable to decouple the two modules.
 from typing import Dict, List, Literal, Optional, Protocol, Set
+import concurrent.futures
 
 from .wellness import Wellness
 
@@ -30,9 +31,10 @@ class Hero:
     _partner: Optional[Partner] = None
     _wellness: Literal[Wellness.JUST_FINE, Wellness.UNHEALTHY] = Wellness.JUST_FINE
 
-    def __init__(self, name: str, interests: List[str]):
+    def __init__(self, name: str, interests: List[str], patience: int):
         self.name = name
         self.interests = interests
+        self.patience = patience
 
     @property
     def partner(self) -> Optional[Partner]:
@@ -44,7 +46,7 @@ class Hero:
     def partner(self, partner: Partner) -> None:
         self._partner = partner
 
-    def get_relationship_wellness(self) -> Literal[Wellness.JUST_FINE, Wellness.UNHEALTHY]:
+    async def get_relationship_wellness(self) -> Literal[Wellness.JUST_FINE, Wellness.UNHEALTHY]:
         """See how well the Hero is doing in their relationship. The Hero will first check in
         with their partner to see if they are communicating. If they aren't
         talking, the Hero will return that they are not doing well. If they
@@ -54,8 +56,8 @@ class Hero:
         Returns:
             Literal[Wellness.JUST_FINE, Wellness.UNHEALTHY]: How the hero is doing
         """
-        communincation = self._check_partner()
-        if communincation is None:
+        communication = await self._check_partner(patience=self.patience)
+        if communication is False:
             return Wellness.UNHEALTHY
         return Wellness.JUST_FINE
 
@@ -96,10 +98,17 @@ class Hero:
         partner_priorities = self.partner.list_priorities()
         return type(self).__name__.lower() not in partner_priorities
 
-    def _check_partner(self) -> bool:
+    async def _check_partner(self, patience: int) -> bool:
         if not self.partner:
             return False
-        return self.partner.communicate()
+
+        # TICK TICK! The Hero doesn't have all day.
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(self.partner.communicate)
+            try:
+                return future.result(timeout=patience)
+            except concurrent.futures.TimeoutError:
+                return False
 
     def _get_partner_priorities(self) -> Set[str]:
         if not self.partner:
