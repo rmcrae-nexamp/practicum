@@ -1,9 +1,11 @@
 import asyncio
+import random
 
+from .dating_pool import LongTermPartner, ShortTermPartner
 from .hero import Hero
-from .partner import Partner, BITCOIN, DOPE_SHIT, HERO, MYSELF
+from .partner import BITCOIN, DOPE_SHIT, HERO, MYSELF, Partner
+from .speed_dating import SpeedDating
 from .wellness import Wellness
-
 
 """
 Geezum creepers, I am finding it really hard to validate the expected behaviors
@@ -105,7 +107,9 @@ def test_hero_get_life_plan():
     """
     # Given
     partner = Partner(priorities=[BITCOIN, DOPE_SHIT])
-    hero = Hero(name="Vic", interests=["entrepreneurship", "helping others"], patience=1)
+    hero = Hero(
+        name="Vic", interests=["entrepreneurship", "helping others"], patience=1
+    )
     hero.partner = partner
 
     # When
@@ -129,7 +133,9 @@ def test_hero_get_life_plan_with_overlapping_interests():
     """
     # Given
     partner = Partner(priorities=["helping others", "dope"])
-    hero = Hero(name="Vic", interests=["entrepreneurship", "helping others"], patience=0)
+    hero = Hero(
+        name="Vic", interests=["entrepreneurship", "helping others"], patience=0
+    )
     hero.partner = partner
 
     # When
@@ -151,7 +157,9 @@ def test_hero_get_life_plan_no_partner():
         - the method should return the hero's interests as keys and the value as 1
     """
     # Given
-    hero = Hero(name="Vic", interests=["entrepreneurship", "helping others"], patience=0)
+    hero = Hero(
+        name="Vic", interests=["entrepreneurship", "helping others"], patience=0
+    )
 
     # When
     life_plan = hero.get_life_plan()
@@ -203,3 +211,29 @@ def test_hero_should_find_new_partner_no_partner():
 
     # Then
     assert should_find_new_partner is True
+
+
+def test_dating_pool():
+    """
+    Given:
+        - a Hero instance
+        - a list of Partner instances
+
+    When:
+        - the mingle method is called
+
+    Then:
+        - the method should return a list of Partner instances that the Hero matched with
+    """
+    # Given
+    partner_types = (LongTermPartner, ShortTermPartner)
+    # list random collection of short and long term partners
+    partner_pool = [partner_types[random.randint(0, 1)]() for _ in range(20)]
+
+    # When
+    hero = Hero(name="Tracy", interests=["vaping", "Jean-Claude Van Damme"], patience=1)
+    speed_dating = SpeedDating(hero)
+    matched_partners = speed_dating.mingle(partner_pool)
+
+    # Then
+    assert all(isinstance(partner, Partner) for partner in matched_partners)
