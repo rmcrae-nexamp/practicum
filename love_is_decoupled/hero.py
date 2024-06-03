@@ -1,6 +1,7 @@
 # Removed the import statement for the Partner class and HERO variable to decouple the two modules.
-from typing import Dict, List, Literal, Optional, Protocol, Set
 import concurrent.futures
+import copy
+from typing import Dict, List, Literal, Optional, Protocol, Set
 
 from .wellness import Wellness
 
@@ -48,11 +49,15 @@ class Hero:
             raise ValueError("The Hero is not well. They cannot have a partner.")
 
         if not self._check_partner(patience=self.patience):
-            raise ValueError("The potential partner is not communicating. The Hero doesn't want them.")
+            raise ValueError(
+                "The potential partner is not communicating. The Hero doesn't want them."
+            )
 
         self._partner = partner
 
-    async def get_relationship_wellness(self) -> Literal[Wellness.JUST_FINE, Wellness.UNHEALTHY]:
+    async def get_relationship_wellness(
+        self,
+    ) -> Literal[Wellness.JUST_FINE, Wellness.UNHEALTHY]:
         """See how well the Hero is doing in their relationship. The Hero will first check in
         with their partner to see if they are communicating. If they aren't
         talking, the Hero will return that they are not doing well. If they
@@ -101,8 +106,12 @@ class Hero:
         if not self.partner:
             return True
 
+        # Might time out if the partner takes too long to list priorities.
         partner_priorities = self.partner.list_priorities()
         return type(self).__name__.lower() not in partner_priorities
+
+    def persona(self) -> "Hero":
+        return copy.deepcopy(self)
 
     async def _check_partner(self, patience: int) -> bool:
         if not self.partner:
@@ -125,7 +134,9 @@ class Hero:
             return set()
         return set(self.partner.list_priorities())
 
-    def _construct_life_plan(self, partner_priorities: Set[str] = None) -> Dict[str, int]:
+    def _construct_life_plan(
+        self, partner_priorities: Set[str] = None
+    ) -> Dict[str, int]:
         # The Hero should be able to construct a life plan with or without a partner.
         if not partner_priorities:
             partner_priorities = set()
